@@ -1,0 +1,18 @@
+# Ignore output folders
+output/
+uploads/
+
+# Ignore all generated files
+*.txt
+*.xlsx
+*.xls
+*.pdf
+*.ASC
+
+# Ignore other common generated files
+*.log
+*.json
+
+# Ignore temp files
+*.tmp
+*.bak
