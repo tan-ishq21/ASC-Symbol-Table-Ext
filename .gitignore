@@ -1,6 +1,8 @@
 # Ignore output folders
 output/
 uploads/
+build/
+dist/
 
 # Ignore all generated files
 *.txt
@@ -8,6 +10,7 @@ uploads/
 *.xls
 *.pdf
 *.ASC
+*.spec
 
 # Ignore other common generated files
 *.log

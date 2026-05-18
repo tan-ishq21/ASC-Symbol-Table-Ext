@@ -1,13 +1,8 @@
-from flask import Flask, render_template, request, send_file
 import os
 import pandas as pd
 
-app = Flask(__name__)
 
-UPLOAD_FOLDER = "uploads"
 OUTPUT_FOLDER = "output"
-
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
 
@@ -160,35 +155,45 @@ def process_asc_file(filepath):
     return txt_path, excel_path
 
 
-@app.route("/", methods=["GET", "POST"])
-def index():
-    if request.method == "POST":
-        file = request.files.get("ascfile")
+def main():
+    print("===============================================")
+    print("        ASC SYMBOL TABLE EXTRACTION TOOL        ")
+    print("===============================================\n")
 
-        if not file:
-            return "No file uploaded!"
+    while True:
+        filepath = input("Enter ASC file path (or drag & drop file here): ").strip().strip('"')
 
-        filepath = os.path.join(UPLOAD_FOLDER, file.filename)
-        file.save(filepath)
+        if not filepath:
+            print("❌ No file path entered.\n")
+            continue
 
-        txt_path, excel_path = process_asc_file(filepath)
+        if not os.path.exists(filepath):
+            print("❌ File not found. Try again.\n")
+            continue
 
-        return render_template("index.html",
-                               txt_ready=True,
-                               excel_ready=True)
+        if not filepath.lower().endswith(".asc"):
+            print("❌ Not an .asc file. Try again.\n")
+            continue
 
-    return render_template("index.html", txt_ready=False, excel_ready=False)
+        print("\nProcessing file... please wait...\n")
 
+        try:
+            txt_path, excel_path = process_asc_file(filepath)
 
-@app.route("/download/txt")
-def download_txt():
-    return send_file(os.path.join(OUTPUT_FOLDER, "ASC_Report.txt"), as_attachment=True)
+            print("✅ Done!")
+            print(f"📄 TXT Report Saved   : {txt_path}")
+            print(f"📊 Excel Report Saved : {excel_path}")
+            print("\nOutput folder: output/\n")
 
+        except Exception as e:
+            print("❌ Error occurred while processing:")
+            print(str(e))
 
-@app.route("/download/excel")
-def download_excel():
-    return send_file(os.path.join(OUTPUT_FOLDER, "ASC_Report.xlsx"), as_attachment=True)
+        choice = input("\nDo you want to process another file? (y/n): ").strip().lower()
+        if choice != "y":
+            print("\nExiting tool...")
+            break
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    main()
